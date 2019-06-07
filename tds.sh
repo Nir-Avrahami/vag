@@ -81,6 +81,26 @@ function install_tomcat(){
   systemctl start tomcat
 }
 
+
+function configDocker(){
+    cat << EOF > /etc/docker/daemon.json
+{
+ "insecure-registries": [
+    "localhost:8082",
+    "172.16.11.100:8083"
+  ],
+"disable-legacy-registry": true,
+"hosts": ["tcp://0.0.0.0:2375", "unix:///var/run/docker.sock"],
+  "metrics-addr" : "0.0.0.0:9323",
+  "experimental" : true
+}
+EOF
+
+  groupadd docker
+  usermod -G docker vagrant
+  service docker restart
+
+}
 function main(){
 
   installPreReq

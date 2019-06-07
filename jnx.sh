@@ -75,6 +75,23 @@ function installNexusArtifactory(){
   systemctl start nexus
 }
 
+function configDocker(){
+    cat << EOF > /etc/docker/daemon.json
+{
+ "insecure-registries": [
+    "localhost:8082",
+    "localhost:8083"
+  ],
+"disable-legacy-registry": true
+}
+EOF
+
+  groupadd docker
+  usermod -G docker jenkins 
+  usermod -G docker vagrant
+  service docker restart
+}
+
 function main(){
   installPreReq
   installMaven
@@ -85,6 +102,5 @@ function main(){
   installJenkins
   praperMVN
   installNexusArtifactory
-  install_tomcat
 }
 main
